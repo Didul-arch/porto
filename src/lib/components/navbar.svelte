@@ -1,0 +1,107 @@
+<script>
+	// Data yang dipakai di tampilan.
+	const title = 'didul.porto';
+	let menuOpen = $state(false);
+</script>
+
+<nav aria-label="Navigasi utama">
+	<div class="logo">{title}<span style="color: grey; font-weight: 100;">[v1.0]</span></div>
+	<button
+		type="button"
+		class="menu-toggle"
+		aria-label={menuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+		aria-expanded={menuOpen}
+		aria-controls="nav-links"
+		onclick={() => menuOpen = !menuOpen}
+	>=</button>
+	<div id="nav-links" class="nav-items" class:open={menuOpen}>
+    	<a href="/projects" onclick={() => menuOpen = false}>Projects</a>
+    	<a href="/about" onclick={() => menuOpen = false}>About</a>
+    	<a href="/blogs" onclick={() => menuOpen = false}>Blogs</a>
+	</div>
+</nav>
+
+<style lang="scss">
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 1rem;
+    padding: 1rem;
+    border: 2px solid #000;
+    width: calc(100% - 2rem);
+    max-width: 1100px;
+    margin: 1rem auto;
+    box-sizing: border-box;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+
+    .nav-items {
+        display: none;
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+
+        &.open {
+          display: flex;
+        }
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .logo {
+        font-weight: bold;
+        display: flex;
+        gap: 6px;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    nav {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100% - 3rem);
+      margin: 1.5rem auto;
+      padding: 1rem 1.5rem;
+
+      .menu-toggle {
+        display: none;
+      }
+
+      .nav-items {
+        display: flex;
+        flex-basis: auto;
+      }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    nav {
+      width: calc(100% - 4rem);
+      margin: 2rem auto;
+      padding: 1rem 2rem;
+    }
+  }
+</style>
