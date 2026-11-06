@@ -5,7 +5,7 @@
 </script>
 
 <nav aria-label="Navigasi utama">
-	<div class="logo">{title}<span style="color: grey; font-weight: 100;">[v1.0]</span></div>
+	<a class="logo" href="/">{title}<span style="color: grey; font-weight: 100;">[v1.0]</span></a>
 	<button
 		type="button"
 		class="menu-toggle"

@@ -1,0 +1,28 @@
+@use './variables';
+
+$active-color: variables.$purple;
+$on-hover-color: lightgrey;
+
+@mixin base {
+    padding: 0.5rem;
+    border: 2px solid black;
+    background: white;
+    color: black;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+        background: $on-hover-color;
+        color: black;
+    }
+
+    &.selected {
+       background: black;
+       color: white;
+    }
+
+    &:active {
+       background: $active-color;
+       color: white;
+    }
+}

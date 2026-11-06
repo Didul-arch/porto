@@ -1,0 +1,20 @@
+$page-max-width: 1100px;
+$page-margin-mobile: 1rem;
+$page-margin-tablet: 1.5rem;
+$page-margin-desktop: 2rem;
+
+// Jarak minimum kanan-kiri; auto menjaga konten tetap di tengah.
+@mixin page-container {
+    width: calc(100% - #{$page-margin-mobile * 2});
+    max-width: $page-max-width;
+    margin-inline: auto;
+    box-sizing: border-box;
+
+    @media (min-width: 768px) {
+        width: calc(100% - #{$page-margin-tablet * 2});
+    }
+
+    @media (min-width: 1024px) {
+        width: calc(100% - #{$page-margin-desktop * 2});
+    }
+}

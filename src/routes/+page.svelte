@@ -5,11 +5,11 @@
 </script>
 
 <style lang="scss">
+    @use '../lib/styles/layout';
+
     main {
-        width: calc(100% - 2rem);
-        max-width: 1100px;
-        margin: 0 auto 2rem;
-        box-sizing: border-box;
+        @include layout.page-container;
+        margin-block: 0 2rem;
     }
 
     .hero-section {
@@ -45,20 +45,12 @@
     }
 
     @media (min-width: 768px) {
-      main {
-        width: calc(100% - 3rem);
-      }
-
       .hero-section {
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
       }
     }
 
     @media (min-width: 1024px) {
-      main {
-        width: calc(100% - 4rem);
-      }
-
       .hero-section {
         .hero-cat {
           width: min(100%, 360px);

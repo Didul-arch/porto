@@ -9,12 +9,16 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"db:migrate": "node-pg-migrate up --migrations-dir src/db/migrations"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",
+		"@sveltejs/adapter-node": "^6.0.1",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@types/pg": "^8.23.1",
+		"node-pg-migrate": "^9.0.0",
 		"sass-embedded": "^1.107.1",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.6.0",
@@ -24,5 +28,10 @@
 	"imports": {
 		"#lib": "./src/lib/index.js",
 		"#lib/*": "./src/lib/*"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1161.0",
+		"pg": "^8.23.1",
+		"zod": "^4.6.7"
 	}
 }

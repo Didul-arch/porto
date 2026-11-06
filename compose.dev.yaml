@@ -1,0 +1,22 @@
+# Pakai bersama compose.yaml: docker compose -f compose.yaml -f compose.dev.yaml up --build -d
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      CI: "true"
+      NODE_ENV: development
+      DOCKER_POLLING: "true"
+    volumes:
+      # Perubahan source langsung terlihat oleh Vite di dalam container.
+      - .:/app
+      # Pisahkan dependency Linux dan file hasil generate dari milik host.
+      - app_node_modules:/app/node_modules
+      - app_svelte_kit:/app/.svelte-kit
+    healthcheck:
+      start_period: 60s
+
+volumes:
+  app_node_modules:
+  app_svelte_kit:
