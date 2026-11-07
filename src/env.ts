@@ -1,10 +1,12 @@
 import { building } from '$app/env';
 import { defineEnvVars } from '@sveltejs/kit/env';
-import { z } from 'zod';
 
-// SvelteKit menjalankan app saat build untuk analisis route. Di Docker build
-// belum ada .env, jadi nilai baru diwajibkan saat app benar-benar jalan.
-const required = { schema: building ? z.string().optional() : z.string() };
+const required = {
+    schema: (value: string | undefined) => {
+        if (value === undefined && !building) throw new Error('Value is missing.');
+        return value as string;
+    }
+};
 
 export const variables = defineEnvVars({
     S3_PUBLIC_BASE_URL: required,

@@ -43,11 +43,9 @@
     </footer>
     </div>
 
-    {#if project.images?.length}
-        <div class="card-images">
-            {#each project.images as image, index}
-                <img src={image} alt={`${project.title} — gambar ${index + 1}`} loading="lazy" />
-            {/each}
+    {#if project.heroImageUrl}
+        <div class="card-image">
+            <img src={project.heroImageUrl} alt={project.title} loading="lazy" />
         </div>
     {/if}
 </article>
@@ -72,11 +70,9 @@
         min-width: 0;
     }
 
-    .card-images {
+    .card-image {
         flex: 0 0 25%;
         min-width: 0;
-        display: grid;
-        gap: 0.75rem;
 
         img {
             display: block;
@@ -92,7 +88,7 @@
             flex-direction: column;
         }
 
-        .card-images {
+        .card-image {
             width: 100%;
             flex-basis: auto;
         }

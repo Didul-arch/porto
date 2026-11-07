@@ -5,20 +5,21 @@ import { createProjectSchema, deleteProjectSchema } from '#lib/schemas/project.t
 import { db } from '#lib/server/db.ts';
 import type { RequestHandler } from './$types';
 
+type ProjectRow = Omit<Project, 'heroImageUrl'> & { heroImageKey: string | null };
+
 export async function GET() {
-    const result = await db.query<Project>(`
+    const result = await db.query<ProjectRow>(`
         SELECT
-            id, title, description, images,
+            id, title, description, hero_image_key AS "heroImageKey",
             category, technologies, status,
             repository_uri AS "repositoryUrl",
             created_at, updated_at
         FROM projects
         ORDER BY created_at DESC, id DESC
     `);
-    const projects = result.rows.map((project) => ({
+    const projects: Project[] = result.rows.map(({ heroImageKey, ...project }) => ({
         ...project,
-        images: project.images?.map((image) => `${S3_PUBLIC_BASE_URL}/${image}`)
-            ?? project.images
+        heroImageUrl: heroImageKey ? `${S3_PUBLIC_BASE_URL}/${heroImageKey}` : null
     }));
 
     return Response.json({
@@ -39,11 +40,11 @@ export const POST: RequestHandler = async ({ request }) => {
             return Response.json({ message: 'Form upload tidak valid.' }, { status: 400 });
         }
 
-        const images = form.getAll('image');
-        if (images.length !== 1 || !(images[0] instanceof File)) {
+        const imageFields = form.getAll('image');
+        if (imageFields.length !== 1 || !(imageFields[0] instanceof File)) {
             return Response.json({ message: 'Kirim tepat satu file pada field image.' }, { status: 400 });
         }
-        image = images[0];
+        image = imageFields[0];
         body = {
             title: form.get('title'),
             description: form.get('description'),
@@ -56,7 +57,7 @@ export const POST: RequestHandler = async ({ request }) => {
         body = await request.json().catch(() => null);
     }
 
-    const schema = isMultipart ? createProjectSchema.omit({ images: true }) : createProjectSchema;
+    const schema = isMultipart ? createProjectSchema.omit({ heroImageKey: true }) : createProjectSchema;
     const parsed = schema.safeParse(body);
 
     if (!parsed.success) {
@@ -85,14 +86,14 @@ export const POST: RequestHandler = async ({ request }) => {
     }
 
     try {
-        const result = await db.query<Project>(
+        const result = await db.query<ProjectRow>(
             `INSERT INTO projects (
                 title, description, category, technologies,
-                status, repository_uri, images
+                status, repository_uri, hero_image_key
             )
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id, title, description, category, technologies,
-                status, repository_uri AS "repositoryUrl", images`,
+                status, repository_uri AS "repositoryUrl", hero_image_key AS "heroImageKey"`,
             [
                 project.title,
                 project.description,
@@ -100,7 +101,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 project.technologies,
                 project.status ?? null,
                 project.repositoryUrl ?? null,
-                imageKey ? [imageKey] : ('images' in project ? project.images : null) ?? null
+                imageKey ?? ('heroImageKey' in project ? project.heroImageKey : null) ?? null
             ]
         );
 
@@ -135,7 +136,7 @@ export const DELETE = async ({ request }) => {
       );
   }
 
-  const result = await db.query<Project>(
+  const result = await db.query(
     `DELETE FROM projects WHERE id=$1`, [parsed.data.id]
   )
   if (result.rowCount === 0) {
