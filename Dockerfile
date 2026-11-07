@@ -1,10 +1,18 @@
-FROM node:24-bookworm-slim AS build
+FROM node:24-bookworm-slim AS deps
 
 WORKDIR /app
 RUN npm install --global pnpm@11.17.0
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
+
+# Dipakai service migrate di Compose; node-pg-migrate ada di devDependencies.
+FROM deps AS migrate
+
+COPY src/db/migrations ./src/db/migrations
+CMD ["pnpm", "run", "db:migrate"]
+
+FROM deps AS build
 
 COPY . .
 RUN pnpm run build
