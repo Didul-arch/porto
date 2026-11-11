@@ -8,8 +8,12 @@ export default defineConfig(({ mode }) => ({
 		watch: {
 			usePolling: loadEnv(mode, '.', 'DOCKER_').DOCKER_POLLING === 'true',
 			interval: 300
-		}
+		},
+		allowedHosts: ["balmy-rockiness-map.ngrok-free.dev"],
 	},
+  preview: {
+     allowedHosts: ["balmy-rockiness-map.ngrok-free.dev"],
+  },
 	plugins: [
 		sveltekit({
 			compilerOptions: {
