@@ -15,7 +15,7 @@
         {/if}
     </div>
 
-    <h2>{project.title}</h2>
+    <h2><a href={`/projects/${project.slug}`}>{project.title}</a></h2>
     <p class="description">{project.description}</p>
 
     <div class="stack">
@@ -29,10 +29,7 @@
 
 
     <footer>
-        <details>
-            <summary>View details <span aria-hidden="true">↗</span></summary>
-            <p>{project.details ?? project.description}</p>
-        </details>
+        <a href={`/projects/${project.slug}`}>Read more <span aria-hidden="true">→</span></a>
 
         {#if project.repositoryUrl}
             <a href={project.repositoryUrl} target="_blank" rel="noreferrer">
@@ -59,8 +56,8 @@
         gap: clamp(1rem, 3vw, 2rem);
         padding: clamp(1.25rem, 3vw, 2rem);
         border: 2px solid variables.$card-border;
-        background: white;
-        color: #111827;
+        background: variables.$surface;
+        color: variables.$text;
         box-shadow: 0 8px 18px -12px rgb(29 98 133 / 35%);
         overflow-wrap: anywhere;
     }
@@ -104,7 +101,7 @@
         line-height: 1.6;
 
         .category {
-            color: #111827;
+            color: variables.$text;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -115,13 +112,21 @@
         font-size: clamp(1.5rem, 3.5vw, 2.25rem);
         line-height: 1.2;
         letter-spacing: -0.04em;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
-    .description,
-    details p {
+    .description {
         max-width: 85ch;
         margin: 0;
-        color: #475569;
+        color: variables.$text-secondary;
         font-size: 0.875rem;
         line-height: 1.8;
     }
@@ -152,7 +157,7 @@
     li {
         border: 1px solid variables.$card-border;
         padding: 0.125rem 0.5rem;
-        background: #f3f8fd;
+        background: variables.$surface-subtle;
     }
 
     footer {
@@ -166,21 +171,7 @@
         font-size: 0.75rem;
     }
 
-    details {
-        min-width: 0;
-        max-width: 100%;
-
-        &[open] {
-            flex-basis: 100%;
-        }
-
-        p {
-            padding-bottom: 0.75rem;
-        }
-    }
-
-    summary,
-    a {
+    footer a {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
@@ -198,15 +189,6 @@
         &:focus-visible {
             outline: 2px solid variables.$purple;
             outline-offset: 4px;
-        }
-    }
-
-    summary {
-        font-weight: 700;
-        list-style: none;
-
-        &::-webkit-details-marker {
-            display: none;
         }
     }
 

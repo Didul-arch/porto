@@ -1,149 +1,104 @@
-import { S3_PUBLIC_BASE_URL } from '$app/env/private';
 import type { Project } from '#lib/types/project.ts';
-import { deleteImage, ImageValidationError, uploadImage } from '#lib/server/storage.ts';
-import { createProjectSchema, deleteProjectSchema } from '#lib/schemas/project.ts';
-import { db } from '#lib/server/db.ts';
+import { deleteImage } from '#lib/server/storage.ts';
+import { deleteProjectSchema } from '#lib/schemas/project.ts';
+import { db, isUniqueViolation } from '#lib/server/db.ts';
+import { PROJECT_COLUMNS, readProjectInput, uploadHeroImage, withImageUrl } from '#lib/server/projects.ts';
+import { EMPTY_DOC } from '#lib/richtext.ts';
 import type { RequestHandler } from './$types';
 
 type ProjectRow = Omit<Project, 'heroImageUrl'> & { heroImageKey: string | null };
 
-export async function GET() {
+export const GET: RequestHandler = async () => {
     const result = await db.query<ProjectRow>(`
-        SELECT
-            id, title, description, hero_image_key AS "heroImageKey",
-            category, technologies, status,
-            repository_uri AS "repositoryUrl",
-            created_at, updated_at
+        SELECT ${PROJECT_COLUMNS}
         FROM projects
         ORDER BY created_at DESC, id DESC
     `);
-    const projects: Project[] = result.rows.map(({ heroImageKey, ...project }) => ({
-        ...project,
-        heroImageUrl: heroImageKey ? `${S3_PUBLIC_BASE_URL}/${heroImageKey}` : null
-    }));
 
     return Response.json({
         total: result.rows.length,
-        projects: projects
+        projects: result.rows.map(withImageUrl)
     });
-}
+};
 
 export const POST: RequestHandler = async ({ request }) => {
-    const isMultipart = request.headers.get('content-type')
-        ?.split(';')[0].trim().toLowerCase() === 'multipart/form-data';
-    let body: unknown;
-    let image: File | undefined;
+    const input = await readProjectInput(request);
+    if (input instanceof Response) return input;
 
-    if (isMultipart) {
-        const form = await request.formData().catch(() => null);
-        if (!form) {
-            return Response.json({ message: 'Form upload tidak valid.' }, { status: 400 });
-        }
-
-        const imageFields = form.getAll('image');
-        if (imageFields.length !== 1 || !(imageFields[0] instanceof File)) {
-            return Response.json({ message: 'Kirim tepat satu file pada field image.' }, { status: 400 });
-        }
-        image = imageFields[0];
-        body = {
-            title: form.get('title'),
-            description: form.get('description'),
-            category: form.get('category'),
-            technologies: form.getAll('technologies'),
-            status: form.get('status'),
-            repositoryUrl: form.get('repositoryUrl') || null
-        };
-    } else {
-        body = await request.json().catch(() => null);
-    }
-
-    const schema = isMultipart ? createProjectSchema.omit({ heroImageKey: true }) : createProjectSchema;
-    const parsed = schema.safeParse(body);
-
-    if (!parsed.success) {
-        return Response.json(
-            {
-                message: 'Data project tidak valid.',
-                errors: parsed.error.issues
-            },
-            { status: 400 }
-        );
-    }
-
-    const project = parsed.data;
-    let imageKey: string | undefined;
+    const { data: project, image } = input;
+    let imageKey: string | null = null;
 
     if (image) {
-        try {
-            imageKey = await uploadImage(image);
-        } catch (error) {
-            if (error instanceof ImageValidationError) {
-                return Response.json({ message: error.message }, { status: error.status });
-            }
-            console.error('Upload gambar project gagal.', error);
-            return Response.json({ message: 'Gagal mengunggah gambar ke storage.' }, { status: 502 });
-        }
+        const uploaded = await uploadHeroImage(image);
+        if (uploaded instanceof Response) return uploaded;
+        imageKey = uploaded;
     }
 
     try {
         const result = await db.query<ProjectRow>(
             `INSERT INTO projects (
-                title, description, category, technologies,
-                status, repository_uri, hero_image_key
+                slug, title, description, category, technologies,
+                status, repository_uri, demo_url, role, hero_image_key, content
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING id, title, description, category, technologies,
-                status, repository_uri AS "repositoryUrl", hero_image_key AS "heroImageKey"`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            RETURNING ${PROJECT_COLUMNS}`,
             [
+                project.slug,
                 project.title,
                 project.description,
                 project.category,
                 project.technologies,
                 project.status ?? null,
                 project.repositoryUrl ?? null,
-                imageKey ?? ('heroImageKey' in project ? project.heroImageKey : null) ?? null
+                project.demoUrl ?? null,
+                project.role ?? null,
+                imageKey ?? ('heroImageKey' in project ? project.heroImageKey : null) ?? null,
+                project.content ?? EMPTY_DOC
             ]
         );
 
-        return Response.json(result.rows[0], { status: 201 });
+        return Response.json(withImageUrl(result.rows[0]), { status: 201 });
     } catch (error) {
+        // The image is already in storage; remove it so it does not become an orphan.
         if (imageKey) {
-            try {
-                await deleteImage(imageKey);
-            } catch (cleanupError) {
-                console.error('Gagal membersihkan gambar setelah penyimpanan project gagal.', {
-                    imageKey,
-                    error: cleanupError
-                });
-            }
+            await deleteImage(imageKey).catch((cleanupError) =>
+                console.error('Failed to clean up image after project insert failed.', { imageKey, cleanupError })
+            );
         }
-        console.error('Penyimpanan project gagal.', error);
-        return Response.json({ message: 'Gagal menyimpan project.' }, { status: 500 });
+        if (isUniqueViolation(error)) {
+            return Response.json({ message: 'Slug is already taken.' }, { status: 409 });
+        }
+        console.error('Project insert failed.', error);
+        return Response.json({ message: 'Failed to save project.' }, { status: 500 });
     }
 };
 
-export const DELETE = async ({ request }) => {
-  const body:unknown = await request.json().catch(() => null);
-  const parsed = deleteProjectSchema.safeParse(body);
+export const DELETE: RequestHandler = async ({ request }) => {
+    const body: unknown = await request.json().catch(() => null);
+    const parsed = deleteProjectSchema.safeParse(body);
 
-  if (!parsed.success) {
-      return Response.json(
-          {
-              message: 'Data project tidak valid.',
-              errors: parsed.error.issues
-          },
-          { status: 400 }
-      );
-  }
+    if (!parsed.success) {
+        return Response.json(
+            { message: 'Invalid project data.', errors: parsed.error.issues },
+            { status: 400 }
+        );
+    }
 
-  const result = await db.query(
-    `DELETE FROM projects WHERE id=$1`, [parsed.data.id]
-  )
-  if (result.rowCount === 0) {
-      return Response.json(
-          { message: 'Project tidak ditemukan.' },
-          { status: 404 }
-      );
-  }
-  return new Response(null, { status: 204 });
-}
+    const result = await db.query<{ heroImageKey: string | null }>(
+        `DELETE FROM projects WHERE id = $1 RETURNING hero_image_key AS "heroImageKey"`,
+        [parsed.data.id]
+    );
+
+    if (result.rowCount === 0) {
+        return Response.json({ message: 'Project not found.' }, { status: 404 });
+    }
+
+    const imageKey = result.rows[0]?.heroImageKey;
+    if (imageKey) {
+        await deleteImage(imageKey).catch((error) =>
+            console.error('Failed to delete project image from storage.', { imageKey, error })
+        );
+    }
+
+    return new Response(null, { status: 204 });
+};
