@@ -18,7 +18,6 @@
 
     main {
         @include layout.page-container;
-        max-width: 75ch;
         margin-block: 2rem;
     }
 </style>
