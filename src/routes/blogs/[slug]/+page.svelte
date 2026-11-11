@@ -1,4 +1,5 @@
 <script lang="ts">
+    import RichTextBody from '#lib/components/RichTextBody.svelte';
     import type { PageProps } from './$types';
 
     let { data }: PageProps = $props();
@@ -18,18 +19,16 @@
             <h1>{data.title}</h1>
             <time datetime={data.createdAt}>{formatDate(data.createdAt)}</time>
         </header>
-        <div class="content">{@html data.html}</div>
+        <RichTextBody html={data.html} headings={data.headings} mobileSans />
     </article>
 </main>
 
 <style lang="scss">
     @use '../../../lib/styles/layout';
-    @use '../../../lib/styles/prose';
     @use '../../../lib/styles/variables';
 
     main {
         @include layout.page-container;
-        max-width: 75ch;
         margin-block: 2rem;
     }
 
@@ -49,8 +48,34 @@
             color: variables.$text-muted;
         }
     }
+    @media (max-width: 767px) {
+        main {
+            margin-block: 1rem 3rem;
+        }
 
-    .content :global {
-        @include prose.body;
+        .back {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            font-size: 0.875rem;
+        }
+
+        header {
+            margin-block: 1rem 1.5rem;
+            overflow-wrap: anywhere;
+
+            h1 {
+                font-family: variables.$font-body;
+                font-size: clamp(1.75rem, 6vw, 2.25rem);
+                line-height: 1.2;
+                text-wrap: balance;
+                margin-bottom: 0.75rem;
+            }
+
+            time {
+                font-size: 0.875rem;
+                line-height: 1.5;
+            }
+        }
     }
 </style>

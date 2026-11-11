@@ -83,6 +83,43 @@
     }
   }
 
+  @media (max-width: 767px) {
+    nav {
+      gap: 0 0.5rem;
+
+      .logo {
+        flex: 1;
+        min-width: 0;
+        flex-wrap: wrap;
+        gap: 0 6px;
+        overflow-wrap: anywhere;
+      }
+
+      .menu-toggle {
+        flex: 0 0 44px;
+      }
+
+      .nav-items {
+        min-width: 0;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        &.open {
+          margin-top: 0.75rem;
+        }
+
+        a {
+          box-sizing: border-box;
+          padding: 0.5rem;
+          font-family: variables.$font-mono;
+          font-size: 1.0625rem;
+          line-height: 1.5;
+          overflow-wrap: anywhere;
+        }
+      }
+    }
+  }
+
   @media (min-width: 768px) {
     nav {
       flex-direction: row;

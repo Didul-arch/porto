@@ -16,5 +16,6 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
     const blog: Blog = await res.json();
 
     // Rendered on the server from a document validated against the Tiptap schema on save.
-    return { ...blog, html: renderRichText(blog.content).html };
+    const { html, headings } = renderRichText(blog.content);
+    return { ...blog, html, headings: headings.filter((heading) => heading.level <= 3) };
 };

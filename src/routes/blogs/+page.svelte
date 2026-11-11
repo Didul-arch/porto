@@ -76,4 +76,56 @@
             color: variables.$text-muted;
         }
     }
+    @media (max-width: 767px) {
+        main {
+            margin-block: 1.5rem 2rem;
+        }
+
+        .judul {
+            margin: 1.5rem 0 2rem;
+
+            h1 {
+                font-size: 2.25rem;
+                line-height: 1.2;
+                margin-bottom: 0.75rem;
+            }
+
+            p {
+                text-align: justify;
+                font-family: variables.$font-body;
+                font-size: 1.0625rem;
+                line-height: 1.65;
+            }
+        }
+
+        .blog-list {
+            min-width: 0;
+            overflow-wrap: anywhere;
+
+            li {
+                min-width: 0;
+                flex-direction: column;
+                align-items: flex-start;
+                font-family: variables.$font-body;
+                font-size: 1.0625rem;
+                line-height: 1.65;
+            }
+
+            a {
+                display: flex;
+                align-items: center;
+                min-height: 44px;
+                width: 100%;
+                min-width: 0;
+                font-size: 1.25rem;
+                line-height: 1.4;
+            }
+
+            time {
+                font-family: variables.$font-mono;
+                font-size: 0.875rem;
+                line-height: 1.6;
+            }
+        }
+    }
 </style>

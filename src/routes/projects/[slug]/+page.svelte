@@ -1,4 +1,5 @@
 <script lang="ts">
+    import RichTextBody from '#lib/components/RichTextBody.svelte';
     import type { PageProps } from './$types';
 
     let { data }: PageProps = $props();
@@ -73,19 +74,8 @@
         </figure>
     {/if}
 
-    <div class="body" class:with-toc={data.headings.length > 0}>
-        {#if data.headings.length}
-            <nav class="toc" aria-label="On this page">
-                <p>On this page</p>
-                <ol>
-                    {#each data.headings as heading (heading.id)}
-                        <li class:nested={heading.level === 3}><a href={`#${heading.id}`}>{heading.text}</a></li>
-                    {/each}
-                </ol>
-            </nav>
-        {/if}
-
-        <article class="content">{@html data.html}</article>
+    <div class="body">
+        <RichTextBody html={data.html} headings={data.headings} />
     </div>
 
     <nav class="pager" aria-label="Project navigation">
@@ -111,7 +101,6 @@
 
 <style lang="scss">
     @use '../../../lib/styles/layout';
-    @use '../../../lib/styles/prose';
     @use '../../../lib/styles/variables';
 
     main {
@@ -146,7 +135,7 @@
 
     h1 {
         margin: 0.5rem 0 1.5rem;
-        font-size: clamp(3rem, 10vw, 6.5rem);
+        font-size: clamp(2.25rem, 10vw, 6.5rem);
         font-weight: 700;
         line-height: 0.95;
         letter-spacing: -0.05em;
@@ -165,7 +154,7 @@
     }
 
     .description {
-        max-width: 60ch;
+        max-width: 80ch;
         margin: 0;
         font-size: 0.95rem;
         line-height: 1.8;
@@ -218,63 +207,6 @@
 
     .body {
         margin-top: 3rem;
-
-        &.with-toc {
-            @media (min-width: 900px) {
-                display: grid;
-                grid-template-columns: 12rem minmax(0, 70ch);
-                gap: 3rem;
-            }
-        }
-    }
-
-    .toc {
-        align-self: start;
-        font-size: 0.75rem;
-
-        @media (min-width: 900px) {
-            position: sticky;
-            top: 2rem;
-        }
-
-        p {
-            margin: 0 0 0.5rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: variables.$text-muted;
-        }
-
-        ol {
-            margin: 0;
-            padding: 0 0 0 0.75rem;
-            list-style: none;
-            border-left: 1px solid variables.$card-border;
-            display: grid;
-            gap: 0.4rem;
-        }
-
-        .nested {
-            padding-left: 0.75rem;
-        }
-
-        a {
-            color: variables.$text-secondary;
-            text-decoration: none;
-
-            &:hover {
-                color: variables.$text;
-                text-decoration: underline;
-            }
-        }
-    }
-
-    .content {
-        max-width: 70ch;
-        font-size: 0.95rem;
-
-        :global {
-            @include prose.body;
-        }
     }
 
     .pager {
@@ -307,6 +239,93 @@
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: variables.$text-muted;
+        }
+    }
+    @media (max-width: 767px) {
+        main {
+            margin-block: 1rem 3rem;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        .hero {
+            margin-top: 1rem;
+        }
+
+        .metadata {
+            font-size: 0.8125rem;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+
+            .outline {
+                -webkit-text-stroke-width: 1px;
+            }
+        }
+
+        .description {
+            font-family: variables.$font-mono;
+            text-align: justify;
+            font-size: 1.125rem;
+            line-height: 1.65;
+            overflow-wrap: anywhere;
+        }
+
+        .facts {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+
+            dt {
+                font-size: 0.75rem;
+            }
+
+            .links {
+                flex-wrap: wrap;
+                gap: 0.5rem 1rem;
+
+                a {
+                    display: inline-flex;
+                    align-items: center;
+                    min-height: 44px;
+                }
+            }
+        }
+
+        .hero-image {
+            margin-top: 1.5rem;
+
+            img {
+                aspect-ratio: 4 / 3;
+            }
+        }
+
+        .body {
+            margin-top: 2rem;
+        }
+
+        .pager {
+            grid-template-columns: minmax(0, 1fr);
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+
+            small {
+                font-size: 0.75rem;
+            }
         }
     }
 </style>

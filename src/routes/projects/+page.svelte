@@ -46,6 +46,7 @@
 <style lang="scss">
    @use '../../lib/styles/layout';
    @use '../../lib/styles/buttons';
+   @use '../../lib/styles/variables';
 
    main {
        @include layout.page-container;
@@ -86,5 +87,49 @@
       p {
           font-size: 1.3rem;
       }
+   }
+   @media (max-width: 767px) {
+       main {
+           margin-block: 1.5rem 2rem;
+       }
+
+       .judul {
+           margin: 1.5rem 0 2rem;
+
+           h1 {
+               font-size: 2.25rem;
+               line-height: 1.2;
+               margin-bottom: 0.75rem;
+           }
+
+           p {
+               text-align: justify;
+               font-family: variables.$font-mono;
+               font-size: 1.0625rem;
+               line-height: 1.65;
+           }
+       }
+
+       .filter {
+           gap: 0.5rem;
+
+           button {
+               min-height: 44px;
+               max-width: 100%;
+               box-sizing: border-box;
+               overflow-wrap: anywhere;
+           }
+       }
+
+       .project-list {
+           grid-template-columns: minmax(0, 1fr);
+
+           > p {
+               text-align: justify;
+               font-family: variables.$font-mono;
+               font-size: 1.0625rem;
+               line-height: 1.65;
+           }
+       }
    }
 </style>

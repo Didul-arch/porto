@@ -6,6 +6,7 @@
 
 <style lang="scss">
     @use '../lib/styles/layout';
+    @use '../lib/styles/variables';
 
     main {
         @include layout.page-container;
@@ -44,6 +45,31 @@
       line-height: 1.7;
     }
 
+    .hero-copy {
+      text-align: justify;
+    }
+
+    @media (max-width: 767px) {
+      main {
+        margin-block: 1.5rem 2rem;
+      }
+
+      .hero-section {
+        gap: 2rem;
+      }
+
+      .hero-copy {
+        text-align: justify;
+        font-family: variables.$font-mono;
+        font-size: 1.125rem;
+        overflow-wrap: anywhere;
+
+        p {
+          line-height: 1.65;
+        }
+      }
+    }
+
     @media (min-width: 768px) {
       .hero-section {
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
@@ -61,7 +87,7 @@
 
 <main>
     <div class="hero-section">
-        <div style="text-align: justify;">
+        <div class="hero-copy">
             <p>Hi, I’m {nama}, a <span style="font-weight: 600;">Software Engineer</span> from Indonesia. I focus on backend development, turning complex business logic into clean, dependable systems. I also explore machine learning and distributed systems on the side.</p>
         </div>
         <div class="hero-cat">

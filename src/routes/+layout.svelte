@@ -47,6 +47,22 @@
       font-display: swap;
     }
 
+    @font-face {
+      font-family: 'IBM Plex Sans';
+      src: url('/fonts/IBMPlexSans-VariableFont_wdth,wght.ttf') format('truetype');
+      font-weight: 100 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'IBM Plex Sans';
+      src: url('/fonts/IBMPlexSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+      font-weight: 100 700;
+      font-style: italic;
+      font-display: swap;
+    }
+
     :global(body) {
       margin: 0;
       font-family: 'IBM Plex Mono', monospace;
