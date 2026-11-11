@@ -6,7 +6,7 @@ export const load: PageLoad = async ({ fetch }) => {
     const res = await fetch('/api/projects');
 
     if (!res.ok) {
-        error(502, 'Gagal mengambil projects.');
+        error(502, 'Failed to load projects.');
     }
 
     const result: { total: number; projects: Project[] } = await res.json();

@@ -1,7 +1,7 @@
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
-// Penanda awal format file, bukan pemeriksaan seluruh isi gambar.
-// offset = posisi byte pertama dari penanda, dihitung mulai dari 0.
+// Leading format signatures (magic bytes), not a full image check.
+// offset = position of the first signature byte, counted from 0.
 export const IMAGE_SIGNATURES = {
     'image/jpeg': [
         { offset: 0, bytes: [255, 216, 255] }

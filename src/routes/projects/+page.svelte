@@ -37,7 +37,7 @@
             {#each filteredProjects as project (project.id)}
                 <ProjectCard {project} />
             {:else}
-                <p>Belum ada project di kategori ini.</p>
+                <p>No projects in this category yet.</p>
             {/each}
         </div>
     </div>

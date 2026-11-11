@@ -54,19 +54,19 @@ export async function checkStorage() {
 
 export async function uploadImage(file: File) {
   if (!(file instanceof File)) {
-    throw new ImageValidationError('Input harus berupa file.');
+    throw new ImageValidationError('Input must be a file.');
   }
 
   if (file.size === 0) {
-    throw new ImageValidationError('File gambar tidak boleh kosong.');
+    throw new ImageValidationError('Image file must not be empty.');
   }
 
   if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    throw new ImageValidationError('Ukuran gambar maksimal 5 MB.', 413);
+    throw new ImageValidationError('Image must be 5 MB or smaller.', 413);
   }
   
   if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.type)) {
-    throw new ImageValidationError('Format gambar harus JPEG, PNG, atau WebP.', 415);
+    throw new ImageValidationError('Image must be JPEG, PNG, or WebP.', 415);
   }
 
   const header = new Uint8Array(
@@ -82,7 +82,7 @@ export async function uploadImage(file: File) {
   )?.[0];
 
   if (!detectedMimeType || detectedMimeType !== file.type) {
-    throw new ImageValidationError('Penanda format gambar tidak cocok dengan MIME type file.', 415);
+    throw new ImageValidationError('Image signature does not match the file MIME type.', 415);
   }
 
   const objectKey = crypto.randomUUID();
