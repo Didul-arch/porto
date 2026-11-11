@@ -1,28 +1,45 @@
 @use './variables';
 
-$active-color: variables.$purple;
-$on-hover-color: lightgrey;
-
-@mixin base {
+// $selectable: false for buttons that never carry the .selected state
+// (avoids Svelte's unused-selector warning).
+@mixin base($selectable: true) {
     padding: 0.5rem;
-    border: 2px solid black;
-    background: white;
-    color: black;
+    border: 2px solid variables.$ink;
+    background: variables.$surface;
+    color: variables.$ink;
     font: inherit;
     cursor: pointer;
 
     &:hover {
-        background: $on-hover-color;
-        color: black;
+        background: variables.$hover;
+        color: variables.$ink;
     }
 
-    &.selected {
-       background: black;
-       color: white;
+    @if $selectable {
+        &.selected {
+            background: variables.$ink;
+            color: variables.$surface;
+        }
     }
 
     &:active {
-       background: $active-color;
-       color: white;
+        background: variables.$purple;
+        color: variables.$surface;
+    }
+
+    &:disabled {
+        cursor: wait;
+        opacity: 0.6;
+    }
+}
+
+@mixin danger {
+    @include base(false);
+    border-color: variables.$danger;
+    color: variables.$danger;
+
+    &:hover {
+        background: variables.$danger;
+        color: variables.$surface;
     }
 }

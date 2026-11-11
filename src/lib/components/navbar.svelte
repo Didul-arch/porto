@@ -1,15 +1,14 @@
 <script>
-	// Data yang dipakai di tampilan.
 	const title = 'didul.porto';
 	let menuOpen = $state(false);
 </script>
 
-<nav aria-label="Navigasi utama">
-	<a class="logo" href="/">{title}<span style="color: grey; font-weight: 100;">[v1.0]</span></a>
+<nav aria-label="Main navigation">
+	<a class="logo" href="/">{title}<span class="version">[v1.0]</span></a>
 	<button
 		type="button"
 		class="menu-toggle"
-		aria-label={menuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+		aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
 		aria-expanded={menuOpen}
 		aria-controls="nav-links"
 		onclick={() => menuOpen = !menuOpen}
@@ -22,6 +21,8 @@
 </nav>
 
 <style lang="scss">
+  @use '../styles/variables';
+
   nav {
     display: flex;
     flex-wrap: wrap;
@@ -29,7 +30,7 @@
     justify-content: space-between;
     gap: 0 1rem;
     padding: 1rem;
-    border: 2px solid #000;
+    border: 2px solid variables.$ink;
     width: calc(100% - 2rem);
     max-width: 1100px;
     margin: 1rem auto;
@@ -60,6 +61,11 @@
       font: inherit;
       font-size: 1.5rem;
       cursor: pointer;
+    }
+
+    .version {
+        color: variables.$text-muted;
+        font-weight: 100;
     }
 
     .logo {

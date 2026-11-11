@@ -1,0 +1,25 @@
+@use './variables';
+
+// Grid layout for a form and its labels.
+@mixin layout {
+    display: grid;
+    gap: 1rem;
+
+    label {
+        display: grid;
+        gap: 0.25rem;
+    }
+
+    .message {
+        margin: 0;
+        color: variables.$danger;
+    }
+}
+
+// Shared look for input, select, and textarea.
+@mixin control {
+    padding: 0.5rem;
+    border: 2px solid variables.$ink;
+    background: variables.$surface;
+    font: inherit;
+}

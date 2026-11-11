@@ -1,3 +1,23 @@
+// Palette: every color used in the UI is defined here.
 $purple: #7c3aed;
-$card-border: #dbe7f3;
+
+$ink: #000;             // borders and primary buttons
+$surface: #fff;         // card and input backgrounds
+$surface-subtle: #f3f8fd;
+$code-bg: #f3f4f6;
+$hover: lightgrey;
+
+$text: #111827;
+$text-secondary: #475569;
 $text-muted: #64748b;
+
+$card-border: #dbe7f3;
+$danger: #b91c1c;
+
+// Syntax highlighting (highlight.js token classes).
+$code-keyword: #7c3aed;
+$code-string: #15803d;
+$code-number: #b45309;
+$code-comment: #64748b;
+$code-function: #1d4ed8;
+$code-type: #0f766e;

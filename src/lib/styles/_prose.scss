@@ -1,0 +1,69 @@
+@use './variables';
+
+// Typography for rendered rich text. Include inside a `:global { }` block
+// because the HTML comes from the renderer, not from the component.
+@mixin body {
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    color: variables.$text-secondary;
+
+    h1, h2, h3 {
+        margin: 2.5rem 0 1rem;
+        line-height: 1.2;
+        letter-spacing: -0.03em;
+        color: variables.$text;
+        scroll-margin-top: 2rem;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.2rem; }
+
+    ul, ol {
+        padding-left: 1.5rem;
+    }
+
+    blockquote {
+        margin: 2rem 0;
+        padding: 1rem 0;
+        border-top: 1px solid variables.$card-border;
+        border-bottom: 1px solid variables.$card-border;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: variables.$text;
+    }
+
+    code {
+        padding: 0.1em 0.3em;
+        background: variables.$code-bg;
+        font-size: 0.9em;
+    }
+
+    pre {
+        padding: 0.75rem 1rem;
+        background: variables.$code-bg;
+        overflow-x: auto;
+
+        code {
+            padding: 0;
+            background: none;
+            font-size: 0.85rem;
+        }
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    // highlight.js token classes (emitted by lowlight).
+    .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in { color: variables.$code-keyword; }
+    .hljs-string, .hljs-attr, .hljs-regexp { color: variables.$code-string; }
+    .hljs-number, .hljs-symbol, .hljs-meta { color: variables.$code-number; }
+    .hljs-comment, .hljs-quote { color: variables.$code-comment; font-style: italic; }
+    .hljs-title, .hljs-function, .hljs-section, .hljs-name { color: variables.$code-function; }
+    .hljs-type, .hljs-class, .hljs-variable, .hljs-template-variable { color: variables.$code-type; }
+}
